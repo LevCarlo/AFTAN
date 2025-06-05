@@ -73,7 +73,7 @@ c======================================================================
       implicit none
       include 'fftw3.h'
       integer*4 n,npoints,nf,nfin,nfout1,ierr,nrow,ncol
-      real*8    piover4,perc,taperl,tamp,arr1(8,100),arr2(7,100)
+      real*8    piover4,perc,taperl,tamp,arr1(8,100),arr2(8,100)
       real*8    t0,dt,delta,vmin,vmax,tmin,tmax,tresh,ffact,ftrig(100)
       real*8    fsnr
       real*4    sei(32768)
@@ -85,6 +85,7 @@ c======================================================================
       integer*4 j,k,m,ntapb,ntape,ne,nb,ntime,ns,ntall,ici,iciflag,ia
       real*8    plan1,plan2
       integer*4 ind(2,32768)
+      integer*4 ia_table(100), ia_table1(100)
       real*8    ipar(6,32768)
       real*8    grvel1(100),tvis1(100),ampgr1(100),ftrig1(100)
       real*8    trig1(100),grvelt(100),tvist(100),ampgrt(100)
@@ -228,6 +229,7 @@ c compute parameters for each maximum
             ia = j
           endif
         enddo
+        ia_table(k) = ia
 c Compute signal to noise ratio (SNR) ------------
         mm = 0
         do j = ici-iciflag+1,ici
@@ -404,6 +406,7 @@ c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             snr1(i-ist+1)   = snr1(i)
             wdth1(i-ist+1)  = wdth1(i)
             om1(i-ist+1)    = om(i)
+            ia_table1(i-ist+1) = ia_table(i)
           enddo
           call trigger(grvel1,om1,nfout2,tresh,trig1, ftrig1,ierr1)
           if(nfout2 .lt. nf*perc/100.0d0) then
@@ -427,6 +430,7 @@ c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
           grvel1(i) = grvel(i)
           snr1(i)   = snr(i)
           wdth1(i)  = wdth(i)
+          ia_table1(i) = ia_table(i)
         enddo
       endif
 cxx   if(nfout2 .ne.0) then
@@ -468,6 +472,13 @@ c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
           arr2(5,i) = ampgr1(i)
           arr2(6,i) = snr1(i)
           arr2(7,i) = wdth1(i)
+c for absolute amplitude map
+          ia = ia_table1(i)
+          if (ia.ge.1 .and. ia.le.ici .and. ind(2,ia).ge.1 .and. ind(2,ia).le.ntall) then
+            arr2(8,i) = ampo(ind(2, ia), i)
+          else
+            arr2(8,i) = -999.0d0 
+          endif
         enddo
       else
         ierr = 2

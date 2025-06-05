@@ -1,5 +1,5 @@
 #
-INST_DIR = ../bin
+INST_DIR = ../bin/
 BIN  = aftan_c_test
 BIN1 = aftan_f_test
 
@@ -32,8 +32,10 @@ $(BIN1) : $(FOBJS1)
 	$(FC) $(FFLAGS) $(CFLAGS) $(FOBJS1) -o $(BIN1) $(LDLIBS) 
 
 install :: $(BIN)
+	mkdir -p $(INST_DIR)
 	install -s $(BIN) $(INST_DIR);
 	install -s $(BIN1) $(INST_DIR)
 
 clean ::
+	rm -rf $(INST_DIR)
 	rm -f $(BIN) $(BIN1) core $(FOBJS) $(FOBJS1)

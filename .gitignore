@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+bin/*
+TEST*/
+*.DISP.* / *.AMP /
+src/aftan_c_test
+src/aftan_f_test

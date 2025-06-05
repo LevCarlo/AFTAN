@@ -19,7 +19,7 @@ void aftanpg_(double *piover4,int *n,float *sei,double *t0,double *dt,
            int *nfout1,double arr1[100][8],int *nfout2,double arr2[100][7],
            double *tamp, int *nrow,int *ncol, double ampo[100][32768],int *ierr);
 void printres_(double *dt,double *delta,int *nfout1,double arr1[100][8],
-           int *nfout2,double arr2[100][7],double *tamp, int *nrow,int *ncol,
+           int *nfout2,double arr2[100][8],double *tamp, int *nrow,int *ncol,
            double ampo[100][32768],int *ierr, char *name,char *pref);
 void readdata_(int *sac,char *name,int *n,double *dt,double *delta,
               double *t0,float sei[32768], int *ierr);

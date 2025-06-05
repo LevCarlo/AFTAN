@@ -82,7 +82,8 @@ FILE  *fd;
  * print completion result
  */
 void printres_(double *xdt,double *delta,int *xnfout1,double arr1[100][8],
-              int *xnfout2,double arr2[100][7],double *xtamp, int *xnrow,
+            //   int *xnfout2,double arr2[100][7],double *xtamp, int *xnrow,
+              int *xnfout2,double arr2[100][8],double *xtamp, int *xnrow,
               int *xncol, double ampo[100][32768],int *xierr, char *xname,
               char *xpref)
 {
@@ -151,10 +152,13 @@ void printres_(double *xdt,double *delta,int *xnfout1,double arr1[100][8],
               printf("Can not open file %s.\n",name2);
               exit(1);
           }
+        //   fprintf(out, "# %4s %10s %10s %12s %12s %12s %8s %10s\n",
+        //     "idx", "T(Central)", "T(Obs)", "Vgr", "Vph", "Amp(Norm.)", "SNR", "AMP(Abs.)");
           for(i = 0; i < nfout2; i++) {
-              fprintf(out,"%4d %10.4lf %10.4lf %12.4lf %12.4lf %12.4lf %8.3lf\n",
+            //   fprintf(out,"%4d %10.4lf %10.4lf %12.4lf %12.4lf %12.4lf %8.3lf\n",
+              fprintf(out,"%4d %10.4lf %10.4lf %12.4lf %12.4lf %12.4lf %8.3lf %10.6lf\n",
                    i,arr2[i][0],arr2[i][1],arr2[i][2],arr2[i][3],
-                     arr2[i][4],arr2[i][5]);
+                     arr2[i][4],arr2[i][5], arr2[i][7]);
           }
           fclose(out);
       }
