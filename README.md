@@ -2,5 +2,5 @@
 
 ### What's New
 
-Added output of absolute amplitude for each period, enabling HV ratio analysis. [Requires validation]
+Output non-log absolute amplitude for each period, enabling HV ratio analysis. [Requires validation]
 

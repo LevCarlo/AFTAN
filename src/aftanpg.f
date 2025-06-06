@@ -78,16 +78,15 @@ c======================================================================
       real*8    fsnr
       real*4    sei(32768)
       double complex dczero,s(32768),sf(32768),fils(32768),tmp(32768)
-      real*8    grvel(100),tvis(100),ampgr(100),om(100),per(100),tim(100)
+      real*8    grvel(100),tvis(100),ampgr(100),om(100),per(100),tim(100),ampabs(100)
       real*8    pha(32768,100),amp(32768,100),ampo(32768,100)
       real*8    time(32768),v(32768),b(32768)
       real*8    alpha,pi,omb,ome,dom,step,amax,t,dph,tm,ph
       integer*4 j,k,m,ntapb,ntape,ne,nb,ntime,ns,ntall,ici,iciflag,ia
       real*8    plan1,plan2
       integer*4 ind(2,32768)
-      integer*4 ia_table(100), ia_table1(100)
-      real*8    ipar(6,32768)
-      real*8    grvel1(100),tvis1(100),ampgr1(100),ftrig1(100)
+      real*8    ipar(7,32768)
+      real*8    grvel1(100),tvis1(100),ampgr1(100),ftrig1(100),ampabs1(100)
       real*8    trig1(100),grvelt(100),tvist(100),ampgrt(100)
       real*8    phgr(100),phgr1(100),phgrt(100),phgrc(100)
 c ---
@@ -229,7 +228,6 @@ c compute parameters for each maximum
             ia = j
           endif
         enddo
-        ia_table(k) = ia
 c Compute signal to noise ratio (SNR) ------------
         mm = 0
         do j = ici-iciflag+1,ici
@@ -269,6 +267,7 @@ c      compute right minimum -------
           ipar(4,j) = 20.0d0*dlog10(ampo(m,k)/dsqrt(lm*rm))
           if(indl.eq.1.and.indr.eq.ntall) ipar(4,j) = ipar(4,j)+100.0d0
           ipar(5,j) = dt*(dabs(dble(m-indl))+dabs(dble(m-indr)))/2
+          ipar(7,j) = ampo(m,k) ! absolute maximum amplitude
         enddo
 c End of SNR computations
         tim(k)   = ipar(1,ia)
@@ -278,6 +277,7 @@ c End of SNR computations
         snr(k)   = ipar(4,ia)
         wdth(k)  = ipar(5,ia)
         phgr(k)  = ipar(6,ia)
+        ampabs(k) = ipar(7,ia)
       enddo
       nfout1 = nf
 c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -406,7 +406,7 @@ c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             snr1(i-ist+1)   = snr1(i)
             wdth1(i-ist+1)  = wdth1(i)
             om1(i-ist+1)    = om(i)
-            ia_table1(i-ist+1) = ia_table(i)
+            ampabs1(i-ist+1) = ampabs(i)
           enddo
           call trigger(grvel1,om1,nfout2,tresh,trig1, ftrig1,ierr1)
           if(nfout2 .lt. nf*perc/100.0d0) then
@@ -430,7 +430,7 @@ c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
           grvel1(i) = grvel(i)
           snr1(i)   = snr(i)
           wdth1(i)  = wdth(i)
-          ia_table1(i) = ia_table(i)
+          ampabs1(i) = ampabs(i)
         enddo
       endif
 cxx   if(nfout2 .ne.0) then
@@ -473,12 +473,8 @@ c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
           arr2(6,i) = snr1(i)
           arr2(7,i) = wdth1(i)
 c for absolute amplitude map
-          ia = ia_table1(i)
-          if (ia.ge.1 .and. ia.le.ici .and. ind(2,ia).ge.1 .and. ind(2,ia).le.ntall) then
-            arr2(8,i) = ampo(ind(2, ia), i)
-          else
-            arr2(8,i) = -999.0d0 
-          endif
+          arr2(8,i) = ampabs1(i)
+
         enddo
       else
         ierr = 2
