@@ -15,7 +15,7 @@ int main (int argc, char *argv[])
  static  double t0, dt, delta, vmin, vmax, tmin, tmax;
  static  double snr, tresh, ffact, perc, taperl,fmatch,piover4;
  static  float sei[32768];
- static  double arr1[100][8],arr2[100][7];
+ static  double arr1[100][8],arr2[100][8];
  static  double tamp, ampo[100][32768], pred[2][300];
  static  int nrow, ncol, npred;
  static  double prpvper[300],prpvvel[300]; /* phase vel prediction files  */
@@ -80,13 +80,14 @@ int main (int argc, char *argv[])
   aftanpg_(&piover4,&n,sei,&t0,&dt,&delta,&vmin,&vmax,&tmin,&tmax,&tresh,
         &ffact,&perc,&npoints,&taperl,&nfin,&snr,&nprpv,prpvper,prpvvel,
         &nfout1,arr1,&nfout2,arr2,&tamp,&nrow,&ncol,ampo,&ierr);
+
   printres_(&dt,&delta,&nfout1,arr1,&nfout2,arr2,&tamp,&nrow,&ncol,
             ampo,&ierr,name,"_1");
   if(nfout2 == 0) continue;   /* break aftan sequence     */
   printf("Tamp = %9.3lf, nrow = %d, ncol = %d\n",tamp,nrow,ncol);
 
+  
 /* Make prediction based on the first iteration               */
-
   npred = nfout2;
   tmin = arr2[0][1];
   tmax = arr2[nfout2-1][1];
@@ -103,6 +104,13 @@ int main (int argc, char *argv[])
         &ffact,&perc,&npoints,&taperl,&nfin,&snr,&fmatch,&npred,pred,
         &nprpv,prpvper,prpvvel,
         &nfout1,arr1,&nfout2,arr2,&tamp,&nrow,&ncol,ampo,&ierr);
+  
+  if(ierr != 0) {
+    printf("WARNING: FTAN with phase match filter failed with ierr = %d. Skipping this file: %s\n", ierr, name);
+    continue;
+}
+
+
   printres_(&dt,&delta,&nfout1,arr1,&nfout2,arr2,&tamp,&nrow,&ncol,
             ampo,&ierr,name,"_2");
   printf("Tamp = %9.3lf, nrow = %d, ncol = %d\n",tamp,nrow,ncol);

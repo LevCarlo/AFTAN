@@ -38,24 +38,28 @@ FILE  *fd;
       *delta = sach.dist;
       nsam = &sach.npts;
       *t0 = sach.b; 
+      if (sach.b < 0.0) {
+          /* symmetric cross-correlation */
+          nn = (1.0 - *t0) + 0.5;
+          if (2 * nn - 1 != *n) {
+              printf("Wrong SAC header n=%d lag=%d\n", *n, (int)(-*t0));
+              *ierr = 1;
+              return;
+          }
+          for (i = 0; i < nn; i++)
+              sei[*n - i - 1] = (sei[i] + sei[*n - i - 1]) / 2.0f;
+          for (i = 0; i < nn; i++)
+              sei[i] = sei[nn - 1 + i];
+          sei[0] /= 2.0f;
+          *n = nn;
+          *t0 = 0.0;
+      } else {
+          printf("Note: treating SAC as regular waveform, skipping symmetry.\n");
+      }
 /*       The body    */
       fread(sei,sizeof(float),*nsam,fd);
       if(iswap) swapn((unsigned char *)sei,(int)(sizeof(float)),*nsam);
       *n = *nsam;
- /*  make symmetric cross-correlaton */
-      nn = (1.0-*t0)+0.5;
-      if(2*nn-1 != *n) { /* lag is not consistent with # of samples */
-         printf("Wrong SAC header n=%d lag=%d\n",*n,(int)(-*t0));
-         *ierr = 1;
-         return;
-      }
-      for(i = 0; i < nn; i++) 
-         sei[*n-i-1]= (sei[i]+sei[*n-i-1])/2.0f;
-      for(i = 0; i < nn; i++) 
-         sei[i] = sei[nn-1+i];
-      sei[0] /= 2.0f;
-      *n = nn;
-      *t0 = 0.0;
    } else {
 /*
  * Read test data from ascii file
@@ -156,7 +160,7 @@ void printres_(double *xdt,double *delta,int *xnfout1,double arr1[100][8],
         //     "idx", "T(Central)", "T(Obs)", "Vgr", "Vph", "Amp(Norm.)", "SNR", "AMP(Abs.)");
           for(i = 0; i < nfout2; i++) {
             //   fprintf(out,"%4d %10.4lf %10.4lf %12.4lf %12.4lf %12.4lf %8.3lf\n",
-              fprintf(out,"%4d %10.4lf %10.4lf %12.4lf %12.4lf %12.4lf %8.3lf %10.6lf\n",
+              fprintf(out,"%4d %10.4lf %10.4lf %12.4lf %12.4lf %12.4lf %8.3lf %10.6e\n",
                    i,arr2[i][0],arr2[i][1],arr2[i][2],arr2[i][3],
                      arr2[i][4],arr2[i][5], arr2[i][7]);
           }

@@ -130,6 +130,8 @@ c  number of samples for tapering, right end
 c [omb,ome] - frequency range
       omb = 2.0d0*pi/tmax
       ome = 2.0d0*pi/tmin
+      ! write(*,*) 'omb =',omb,' ome =',ome
+      ! write(*,*) 'tmin =',tmin,' tmax =',tmax
 c find min/max of prediction period
       maxTpr = pred(1,1)
       minTpr = pred(1,1)
@@ -139,7 +141,7 @@ c find min/max of prediction period
       enddo
 c evaluation of spline polinomial forms for phase match filter
       ip = 1
-      call pred_cur(ip,delta,dsqrt(omb*ome),npred,pred,om0,tg0)
+
       write(*,*)'T0= ',2.0d0*pi/om0,', tg0= ',tg0
 c seismgram tapering
       nb = max0(2,nint((delta/vmax-t0)/dt))
@@ -332,7 +334,16 @@ c      compute right minimum -------
                 indr = mi
               endif
             enddo
+          
+          ! To avoid zero division
+          if (lm .eq. 0.d0 .and. rm .gt. 0.d0) then
+            lm = rm
+          elseif (rm .eq. 0.d0 .and. lm .gt. 0.d0) then
+            rm = lm
+          endif
+
           ipar(4,j) = 20.0d0*dlog10(ampo(m,k)/dsqrt(lm*rm))
+          ! write(*,*)'lm =',lm,' rm =',rm, 'ampo(m,k) =',ampo(m,k)
           if(indl.eq.1.and.indr.eq.ntall) ipar(4,j) = ipar(4,j)+100.0d0
           ipar(5,j) = dt*(dabs(dble(m-indl))+dabs(dble(m-indr)))/2
           

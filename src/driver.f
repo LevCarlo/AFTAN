@@ -6,7 +6,7 @@ c
       real*8    t0, dt, delta, vmin, vmax, tmin, tmax
       real*8    snr, tresh, ffact, perc, taperl,fmatch,piover4
       real*4    sei(32768)
-      real*8    arr1(8,100),arr2(7,100)
+      real*8    arr1(8,100),arr2(8,100)
       real*8    tamp, ampo(32768,100), pred(300,2)
       integer*4 nrow, ncol, npred
       real*8    prpvper(300),prpvvel(300)

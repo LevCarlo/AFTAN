@@ -474,8 +474,9 @@ c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
           arr2(7,i) = wdth1(i)
 c for absolute amplitude map
           arr2(8,i) = ampabs1(i)
-
         enddo
+        ! write(*,*) 'tmin', arr2(2, 1), 'tmax', arr2(2,nfout2)
+
       else
         ierr = 2
       endif
